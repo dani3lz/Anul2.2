@@ -1,7 +1,6 @@
 #include "framework.h"
 #include "PPE.h"
 
-
 #define MAX_LOADSTRING 100
 
 HINSTANCE hInst;
@@ -14,7 +13,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 
 // Global
 HWND mHwnd;
-RECT clientRect;
+RECT clientRect, rc;
 POINT* ptr = new POINT[4];
 POINT* ptr2 = new POINT[4];
 int sizeWnd = 800;
@@ -97,13 +96,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
      UNREFERENCED_PARAMETER(hPrevInstance);
      UNREFERENCED_PARAMETER(lpCmdLine);
 
-     // TODO: Разместите код здесь.
-
-     // Инициализация глобальных строк
      LoadStringW(hInstance, IDC_PPE, szWindowClass, MAX_LOADSTRING);
      MyRegisterClass(hInstance);
 
-     // Выполнить инициализацию приложения:
      if (!InitInstance(hInstance, nCmdShow))
      {
           return FALSE;
@@ -113,7 +108,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
      MSG msg;
 
-     // Цикл основного сообщения:
      while (GetMessage(&msg, nullptr, 0, 0))
      {
           if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -193,6 +187,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
      {
           RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE);
      }
+     case WM_MOUSEMOVE:
+          if (wParam & MK_LBUTTON || wParam & MK_RBUTTON)
+          {
+               HDC hdc = GetDC(mHwnd);
+               HPEN BezierPen2 = CreatePen(PS_SOLID, 2, RGB(0, 255, 0));
+               SelectObject(hdc, BezierPen2);
+               if (wParam & MK_LBUTTON)
+               {
+                    ptr2[2].x = LOWORD(lParam);
+                    ptr2[2].y = HIWORD(lParam);
+               }
+               if (wParam & MK_RBUTTON)
+               {
+                    ptr2[3].x = LOWORD(lParam);
+                    ptr2[3].y = HIWORD(lParam);
+               }
+               DeleteObject(BezierPen2);
+               ReleaseDC(mHwnd, hdc);
+          }
      case WM_PAINT:
      {
           GetClientRect(mHwnd, &clientRect);
@@ -265,7 +278,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                pos = Rotate(ptr, arr, 6);
                break;
           }
-
           default:
                break;
           }
