@@ -15,6 +15,8 @@ RECT clientRect;
 RECT objRect;
 bool border = true;
 int sizeLeft, sizeRight, sizeTop, sizeBottom;
+int sizeLeft1, sizeRight1, sizeTop1, sizeBottom1;
+int arctop, arcleft, arcright, arcbottom;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
      _In_opt_ HINSTANCE hPrevInstance,
@@ -75,7 +77,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
      hInst = hInstance;
      HWND hWnd = CreateWindowW(szWindowClass, L"> Lab.2", WS_OVERLAPPEDWINDOW,
           CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
-     SetWindowPos(hWnd, NULL, NULL, NULL, 250, 250, NULL);
+     SetWindowPos(hWnd, NULL, NULL, NULL, 250, 370, NULL);
 
      if (!hWnd)
      {
@@ -91,6 +93,16 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
      sizeRight = sizeLeft + 5;
      sizeTop = 5;
      sizeBottom = sizeLeft * 2;
+
+     sizeLeft1 = 80;
+     sizeRight1 = sizeLeft1 - 45;
+     sizeTop1 = 5;
+     sizeBottom1 = sizeLeft1 + 30;
+
+     arctop = 5;
+     arcleft = 230;
+     arcright = 35;
+     arcbottom = arcleft + 30;
 
      return TRUE;
 }
@@ -120,19 +132,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
           SelectObject(hdc, darkLightPen);
           SelectObject(hdc, redBrush);
+
           if (border) {
-               sizeTop++; 
-               sizeRight++;
+               sizeTop++; sizeRight++;
+               sizeTop1++; sizeRight1++;
+               arctop++; arcright++;
           }
           else {
-               sizeTop--;
-               sizeRight--;
+               sizeTop--; sizeRight--;
+               sizeTop1--; sizeRight1--;
+               arctop--; arcright--;
           }
 
-          if (sizeRight == clientRect.right - 5) border = false;
-          if (sizeTop == clientRect.left + 5) border = true;
+          if (sizeRight >= clientRect.right - 5) border = false;
+          if (sizeTop <= clientRect.left + 5) border = true;
 
           Rectangle(hdc, sizeTop, sizeLeft, sizeRight, sizeBottom);
+          Ellipse(hdc, sizeTop1, sizeLeft1, sizeRight1, sizeBottom1);
+          RoundRect(hdc, sizeTop, sizeLeft + 100, sizeRight, sizeBottom + 100, 10, 10);
+          Chord(hdc, sizeTop1, sizeLeft1 + 100, sizeRight1, sizeBottom1 + 100, sizeTop1, sizeLeft1 + 100, sizeTop1, sizeLeft1 + 100);
+
+          Arc(hdc, arctop, arcleft, arcright, arcbottom, arctop, arcleft, arctop, arcleft);
+          Pie(hdc, arctop, arcleft + 50, arcright, arcbottom + 50, arctop, arcleft + 50, arctop, arcleft + 50);
 
           SelectObject(hdc, oldbrush);
           SelectObject(hdc, oldpen);
