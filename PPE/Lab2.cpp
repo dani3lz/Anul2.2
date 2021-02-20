@@ -17,6 +17,7 @@ bool border = true;
 int sizeLeft, sizeRight, sizeTop, sizeBottom;
 int sizeLeft1, sizeRight1, sizeTop1, sizeBottom1;
 int arctop, arcleft, arcright, arcbottom;
+int it;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
      _In_opt_ HINSTANCE hPrevInstance,
